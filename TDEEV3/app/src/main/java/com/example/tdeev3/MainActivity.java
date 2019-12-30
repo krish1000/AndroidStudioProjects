@@ -33,15 +33,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //above came with setup
 
-        //added:
+        //declared Firebase Authenticator - for login api
         mAuth = FirebaseAuth.getInstance();
 
 //        FirebaseUser currentUser = mAuth.getCurrentUser();
 //        updateUI(currentUser);
 
-        emailField = findViewById(R.id.emailT);
-        passwordField = findViewById(R.id.passwordT);
-        signInButton = findViewById(R.id.signInB);
+        //declaring email, pass, signin button & fields.
+        emailField = findViewById(R.id.tvEmail);
+        passwordField = findViewById(R.id.tvPassword);
+        signInButton = findViewById(R.id.btnSignIn);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * during startup mAuth adds listener to check if user is already signed in (in OnCreate())
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -70,28 +74,37 @@ public class MainActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    private void startSignin(){
+    /**
+     * Starts signing in process when the button is clicked via onclicklistener in onCreate()
+     */
+    private void startSignin() {
         String email = emailField.getText().toString();   // dont forget .getText().toString()
         String passW = passwordField.getText().toString();
 
         //if email or pass is empty, then let the user know to fill in
-        if((TextUtils.isEmpty(email) || TextUtils.isEmpty(passW))){
+        if ((TextUtils.isEmpty(email) || TextUtils.isEmpty(passW))) {
             Toast.makeText(MainActivity.this, "Field(s) are empty!", Toast.LENGTH_LONG).show();
         } else {
             mAuth.signInWithEmailAndPassword(email, passW).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (!task.isSuccessful()) {
-                        // Sign in was not sucessful
+                        // Sign in was not successful
                         Toast.makeText(MainActivity.this, "Sign in Problem", Toast.LENGTH_LONG).show();
                     } else {
-
+                        /*
+                         * dont need this else statement tbh, but for future reference:
+                         * if user was able to sign in, u can add other stuff here (during first signin)
+                         * so maybe adding a tutorial of the app etc. could be nice
+                         */
                     }
                 }
             });
         }
     }
+}
 
+/* Was testing out firebase login api  ***/
 //   mAuth.signInWithEmailAndPassword(email, password)
 //            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 //        @Override
@@ -112,5 +125,3 @@ public class MainActivity extends AppCompatActivity {
 //            // ...
 //        }
 //    });
-
-}
